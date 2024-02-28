@@ -4,6 +4,7 @@ using HotelBooking.UnitTests.Fakes;
 using Xunit;
 using System.Linq;
 using System.Collections.Generic;
+using Moq;
 
 
 namespace HotelBooking.UnitTests
@@ -11,14 +12,35 @@ namespace HotelBooking.UnitTests
     public class BookingManagerTests
     {
         private IBookingManager bookingManager;
-        IRepository<Booking> bookingRepository;
+        //IRepository<Booking> bookingRepository;
+        private Mock<IRepository<Booking>> mockBookingrepository;
+        private Mock<IRepository<Room>> mockRoomRepository;
 
         public BookingManagerTests(){
-            DateTime start = DateTime.Today.AddDays(10);
-            DateTime end = DateTime.Today.AddDays(20);
-            bookingRepository = new FakeBookingRepository(start, end);
-            IRepository<Room> roomRepository = new FakeRoomRepository();
-            bookingManager = new BookingManager(bookingRepository, roomRepository);
+            DateTime fullyOccupiedStartDate = DateTime.Today.AddDays(10);
+            DateTime fullyOccupiedEndDate = DateTime.Today.AddDays(20);
+            //bookingRepository = new FakeBookingRepository(start, end);
+            //IRepository<Room> roomRepository = new FakeRoomRepository();
+
+            mockBookingrepository = new Mock<IRepository<Booking>>();
+            mockRoomRepository = new Mock<IRepository<Room>>();
+
+            var rooms = new List<Room>
+            {
+                new Room { Id=1, Description="A" },
+                new Room { Id=2, Description="B" },
+            };
+            mockRoomRepository.Setup(x => x.GetAll()).Returns(rooms);
+            var bookings = new List<Booking>
+            {
+                new Booking { Id=1, StartDate=DateTime.Today.AddDays(1), EndDate=DateTime.Today.AddDays(1), IsActive=true, CustomerId=1, RoomId=1 },
+                new Booking { Id=1, StartDate=fullyOccupiedStartDate, EndDate=fullyOccupiedEndDate, IsActive=true, CustomerId=1, RoomId=1 },
+                new Booking { Id=2, StartDate=fullyOccupiedStartDate, EndDate=fullyOccupiedEndDate, IsActive=true, CustomerId=2, RoomId=2 },
+            };
+
+            mockBookingrepository.Setup(x => x.GetAll()).Returns(bookings);
+
+            bookingManager = new BookingManager(mockBookingrepository.Object, mockRoomRepository.Object);
         }
         public static IEnumerable<object[]> GetOccupiedDates()
         {
@@ -30,7 +52,6 @@ namespace HotelBooking.UnitTests
                 new object[] { DateTime.Today.AddDays(11), DateTime.Today.AddDays(14) },
                 new object[] { DateTime.Today.AddDays(14), DateTime.Today.AddDays(16) },
                 new object[] { DateTime.Today.AddDays(16), DateTime.Today.AddDays(19) }
-
             };
 
             return data;
@@ -43,8 +64,67 @@ namespace HotelBooking.UnitTests
                 new object[] { DateTime.Today.AddDays(21), DateTime.Today.AddDays(21) },
 
             };
-
             return data;
+        }
+        [Fact]
+        private void GetFullyOccupiedDates_11OccupiedDates_ReturnsListOf11()
+        {
+            DateTime startDate = DateTime.Today.AddDays(1);
+            DateTime endDate = DateTime.Today.AddDays(200);
+
+            List<DateTime> list = bookingManager.GetFullyOccupiedDates(startDate, endDate);
+
+            Assert.Equal(list.Count, 11);
+        }
+        [Fact]
+        private void GetFullyOccupiedDates_NotOccupiedDay_ReturnsEmptyList()
+        {
+            DateTime startDate = DateTime.Today.AddDays(25);
+            DateTime endDate = DateTime.Today.AddDays(29);
+
+            List<DateTime> list = bookingManager.GetFullyOccupiedDates(startDate, endDate);
+
+            Assert.Empty(list);
+        }
+        [Fact]
+        private void GetFullyOccupiedDates_StartDateBeforeEndDate_ThrowsArgumentException() 
+        {
+            DateTime startDate = DateTime.Today.AddDays(25);
+            DateTime endDate = DateTime.Today.AddDays(22);
+
+            Action act = () => bookingManager.GetFullyOccupiedDates(startDate, endDate);
+
+            Assert.Throws<ArgumentException>(act);
+        }
+        [Fact]
+        private void CreateBooking_RoomAvailable_ReturnsTrue()
+        {
+            //arrange
+            Booking booking = new Booking
+            {
+                StartDate = DateTime.Today.AddDays(1),
+                EndDate = DateTime.Today.AddDays(2)
+            };
+            //act
+            var act = bookingManager.CreateBooking(booking);
+
+            //assert
+            Assert.True(act);
+        }
+        [Fact]
+        private void CreateBooking_RoomNotAvailable_ReturnsFalse()
+        {
+            //arrange
+            Booking booking = new Booking
+            {
+                StartDate = DateTime.Today.AddDays(11),
+                EndDate = DateTime.Today.AddDays(12)
+            };
+            //act
+            var act = bookingManager.CreateBooking(booking);
+
+            //assert
+            Assert.False(act);
         }
 
         [Fact]
@@ -73,8 +153,6 @@ namespace HotelBooking.UnitTests
             Assert.Throws<ArgumentException>(act);
         }
 
-
-
         [Theory]
         [MemberData(nameof(GetFreeDates))]
         public void FindAvailableRoom_RoomAvailable_RoomIdNotMinusOne(DateTime startDate, DateTime endDate)
@@ -97,7 +175,7 @@ namespace HotelBooking.UnitTests
             int roomId = bookingManager.FindAvailableRoom(date, date);
 
             // Assert
-            var bookingForReturnedRoomId = bookingRepository.GetAll().Where(
+            var bookingForReturnedRoomId = mockBookingrepository.Object.GetAll().Where(
                 b => b.RoomId == roomId
                 && b.StartDate <= date
                 && b.EndDate >= date
@@ -105,7 +183,6 @@ namespace HotelBooking.UnitTests
 
             Assert.Empty(bookingForReturnedRoomId);
         }
-
 
         [Theory]
         [MemberData(nameof(GetOccupiedDates))]
@@ -116,7 +193,5 @@ namespace HotelBooking.UnitTests
             // Assert
             Assert.Equal(-1, roomId);
         }
-
-
     }
 }
