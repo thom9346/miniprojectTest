@@ -1,0 +1,496 @@
+{
+	"info": {
+		"_postman_id": "ec1af71d-f50c-4c5e-bfb3-0fd4d294ce2b",
+		"name": "HotelBooking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3649718"
+	},
+	"item": [
+		{
+			"name": "rooms - Room 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"Room 1\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/rooms",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"rooms"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rooms - Room 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"Room 2\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/rooms",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"rooms"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rooms",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response is json\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"//pm.test(\"Response length is correct\", function () {",
+							"//    var jsonData = pm.response.json();",
+							"//    pm.expect(jsonData.length).to.eql(2);",
+							"//});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/rooms",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"rooms"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rooms/0",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is json\", function () {",
+							"    pm.response.to.be.badRequest;",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/rooms/0",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"rooms",
+						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rooms/2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response is json\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response has correct room id\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.id).to.eql(2);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/rooms/2",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"rooms",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "booking - Booking 1",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const today = new Date();\r",
+							"const year = today.getFullYear();\r",
+							"const month = String(today.getMonth() + 1).padStart(2, '0');\r",
+							"const startDay = String(today.getDate() + 1).padStart(2, '0');\r",
+							"const endDay = String(today.getDate() + 2).padStart(2, '0');\r",
+							"\r",
+							"const formattedStartDate = `${year}-${month}-${startDay}`;\r",
+							"const formattedEndDate = `${year}-${month}-${endDay}`;\r",
+							"\r",
+							"pm.request.body = {\r",
+							"    mode: 'raw',\r",
+							"    raw: JSON.stringify({\r",
+							"    \"startDate\": formattedStartDate,\r",
+							"    \"endDate\" : formattedEndDate,\r",
+							"    \"customerId\": 1\r",
+							"})\r",
+							"}\r",
+							"pm.request.headers.add({\r",
+							"    key: 'Content-Type',\r",
+							"    value: 'application/json'\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/Bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "booking - Booking 2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const today = new Date();\r",
+							"const year = today.getFullYear();\r",
+							"const month = String(today.getMonth() + 1).padStart(2, '0');\r",
+							"const startDay = String(today.getDate() + 1).padStart(2, '0');\r",
+							"const endDay = String(today.getDate() + 2).padStart(2, '0');\r",
+							"\r",
+							"const formattedStartDate = `${year}-${month}-${startDay}`;\r",
+							"const formattedEndDate = `${year}-${month}-${endDay}`;\r",
+							"\r",
+							"pm.request.body = {\r",
+							"    mode: 'raw',\r",
+							"    raw: JSON.stringify({\r",
+							"    \"startDate\": formattedStartDate,\r",
+							"    \"endDate\" : formattedEndDate,\r",
+							"    \"customerId\": 1\r",
+							"})\r",
+							"}\r",
+							"pm.request.headers.add({\r",
+							"    key: 'Content-Type',\r",
+							"    value: 'application/json'\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/Bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "booking - Conflict",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const today = new Date();\r",
+							"const year = today.getFullYear();\r",
+							"const month = String(today.getMonth() + 1).padStart(2, '0');\r",
+							"const startDay = String(today.getDate() + 1).padStart(2, '0');\r",
+							"const endDay = String(today.getDate() + 2).padStart(2, '0');\r",
+							"\r",
+							"const formattedStartDate = `${year}-${month}-${startDay}`;\r",
+							"const formattedEndDate = `${year}-${month}-${endDay}`;\r",
+							"\r",
+							"pm.request.body = {\r",
+							"    mode: 'raw',\r",
+							"    raw: JSON.stringify({\r",
+							"    \"startDate\": formattedStartDate,\r",
+							"    \"endDate\" : formattedEndDate,\r",
+							"    \"customerId\": 1\r",
+							"})\r",
+							"}\r",
+							"pm.request.headers.add({\r",
+							"    key: 'Content-Type',\r",
+							"    value: 'application/json'\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 409\", function () {\r",
+							"    pm.response.to.have.status(409);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/Bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "booking - Null returns bad request",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "null",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/Bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Bookings"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
