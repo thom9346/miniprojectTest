@@ -66,36 +66,69 @@ namespace HotelBooking.UnitTests
             };
             return data;
         }
+
+        
         [Fact]
         private void GetFullyOccupiedDates_11OccupiedDates_ReturnsListOf11()
         {
+            //Arrange
             DateTime startDate = DateTime.Today.AddDays(1);
             DateTime endDate = DateTime.Today.AddDays(200);
 
+            //Act
             List<DateTime> list = bookingManager.GetFullyOccupiedDates(startDate, endDate);
 
+            //Assert
             Assert.Equal(list.Count, 11);
         }
         [Fact]
         private void GetFullyOccupiedDates_NotOccupiedDay_ReturnsEmptyList()
         {
+            //Arrange
             DateTime startDate = DateTime.Today.AddDays(25);
             DateTime endDate = DateTime.Today.AddDays(29);
 
+            //Act
             List<DateTime> list = bookingManager.GetFullyOccupiedDates(startDate, endDate);
 
+            //Assert
             Assert.Empty(list);
         }
         [Fact]
         private void GetFullyOccupiedDates_StartDateBeforeEndDate_ThrowsArgumentException() 
         {
+            //Arrange
             DateTime startDate = DateTime.Today.AddDays(25);
             DateTime endDate = DateTime.Today.AddDays(22);
 
+            //Act
             Action act = () => bookingManager.GetFullyOccupiedDates(startDate, endDate);
 
+            //Assert
             Assert.Throws<ArgumentException>(act);
         }
+
+        //  ANTI-PATTERN: WRONG WAY TO DO IT:
+        //  Can't use variables in InLineData
+
+        /*
+        [Theory]
+        [InlineData("13/03/2024", "14/03/2024")]
+        [InlineData("15/03/2024", "16/03/2024")]
+        private void BadCreateBooking_RoomAvailable_ReturnsTrue(string startDate, string endDate)
+        {
+            //arrange
+            Booking booking = new Booking
+            {
+                StartDate = DateTime.Parse(startDate),
+                EndDate = DateTime.Parse(endDate)
+            };
+            //act
+            var act = bookingManager.CreateBooking(booking);
+
+            //assert
+            Assert.True(act);
+        }*/
         [Fact]
         private void CreateBooking_RoomAvailable_ReturnsTrue()
         {
@@ -132,9 +165,9 @@ namespace HotelBooking.UnitTests
         {
             // Arrange
             DateTime date = DateTime.Today;
-
+            DateTime laterDate = date.AddDays(1);
             // Act
-            Action act = () => bookingManager.FindAvailableRoom(date, date);
+            Action act = () => bookingManager.FindAvailableRoom(date, laterDate);
 
             // Assert
             Assert.Throws<ArgumentException>(act);
@@ -152,7 +185,7 @@ namespace HotelBooking.UnitTests
             // Assert
             Assert.Throws<ArgumentException>(act);
         }
-
+        
         [Theory]
         [MemberData(nameof(GetFreeDates))]
         public void FindAvailableRoom_RoomAvailable_RoomIdNotMinusOne(DateTime startDate, DateTime endDate)
