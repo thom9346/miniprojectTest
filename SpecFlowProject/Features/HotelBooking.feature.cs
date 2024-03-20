@@ -86,6 +86,16 @@ namespace SpecFlowProject.Features
         [Xunit.TraitAttribute("Category", "tag1")]
         [Xunit.InlineDataAttribute("\'1\'", "\'2\'", "\'True\'", new string[0])]
         [Xunit.InlineDataAttribute("\'11\'", "\'12\'", "\'False\'", new string[0])]
+        [Xunit.InlineDataAttribute("\'1\'", "\'1\'", "\'True\'", new string[0])]
+        [Xunit.InlineDataAttribute("\'21\'", "\'22\'", "\'True\'", new string[0])]
+        [Xunit.InlineDataAttribute("\'1\'", "\'22\'", "\'False\'", new string[0])]
+        [Xunit.InlineDataAttribute("\'1\'", "\'10\'", "\'False\'", new string[0])]
+        [Xunit.InlineDataAttribute("\'1\'", "\'20\'", "\'False\'", new string[0])]
+        [Xunit.InlineDataAttribute("\'10\'", "\'22\'", "\'False\'", new string[0])]
+        [Xunit.InlineDataAttribute("\'20\'", "\' 22\'", "\'False\'", new string[0])]
+        [Xunit.InlineDataAttribute("\'10\'", "\'10\'", "\'False\'", new string[0])]
+        [Xunit.InlineDataAttribute("\'20\'", "\'20\'", "\'False\'", new string[0])]
+        [Xunit.InlineDataAttribute("\'10\'", "\'20\'", "\'False\'", new string[0])]
         public virtual void BookAvailableRoom(string startDay, string endDay, string result, string[] exampleTags)
         {
             string[] @__tags = new string[] {
